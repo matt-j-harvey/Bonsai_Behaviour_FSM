@@ -29,6 +29,7 @@
         <Property Name="Delay_Added" Category="Delay Time" />
         <Property Name="Punish_Time" />
         <Property Name="Stop Trial Proabability" Category="Trial_Probabilities" />
+        <Property Name="Auto_Reward" Category="Reward" />
       </Expression>
       <Expression xsi:type="GroupWorkflow">
         <Name>Behaviour_Parameters</Name>
@@ -39,7 +40,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="FloatProperty">
-                <Value>2.8</Value>
+                <Value>1.5</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -50,7 +51,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="FloatProperty">
-                <Value>0.5</Value>
+                <Value>0.3</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -61,7 +62,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="FloatProperty">
-                <Value>5</Value>
+                <Value>-5</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -72,7 +73,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="FloatProperty">
-                <Value>3</Value>
+                <Value>1</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -83,7 +84,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="FloatProperty">
-                <Value>0.3</Value>
+                <Value>1</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -94,7 +95,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="FloatProperty">
-                <Value>0.5</Value>
+                <Value>0</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -105,7 +106,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="FloatProperty">
-                <Value>0.2</Value>
+                <Value>0</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -126,12 +127,23 @@
               <Property Name="Value" DisplayName="Reward_Duration" />
             </Expression>
             <Expression xsi:type="Combinator">
-              <Combinator xsi:type="FloatProperty">
-                <Value>0.8</Value>
+              <Combinator xsi:type="IntProperty">
+                <Value>1000</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
               <Name>Reward_Duration</Name>
+            </Expression>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="Value" DisplayName="Auto_Reward" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="BooleanProperty">
+                <Value>true</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>Auto_Reward</Name>
             </Expression>
             <Expression xsi:type="ExternalizedMapping">
               <Property Name="Value" DisplayName="Lick_Threshold" />
@@ -218,6 +230,8 @@
             <Edge From="37" To="38" Label="Source1" />
             <Edge From="39" To="40" Label="Source1" />
             <Edge From="40" To="41" Label="Source1" />
+            <Edge From="42" To="43" Label="Source1" />
+            <Edge From="43" To="44" Label="Source1" />
           </Edges>
         </Workflow>
       </Expression>
@@ -309,14 +323,6 @@
             <Expression xsi:type="MulticastSubject">
               <Name>Lick_Trace</Name>
             </Expression>
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="StringProperty">
-                <Value>P</Value>
-              </Combinator>
-            </Expression>
-            <Expression xsi:type="SubscribeSubject">
-              <Name>Reward_Valve_Status</Name>
-            </Expression>
             <Expression xsi:type="SubscribeSubject">
               <Name>Trial_Start_Value</Name>
             </Expression>
@@ -332,16 +338,29 @@
             <Expression xsi:type="SubscribeSubject">
               <Name>Stop_Tone_Value</Name>
             </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Reward_Duration</Name>
+            </Expression>
+            <Expression xsi:type="scr:ExpressionTransform">
+              <scr:Name>Reward_Duration_Padding</scr:Name>
+              <scr:Expression>Math.Min(Math.Max(it, 0), 9999).ToString("D4")</scr:Expression>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Reward_Valve_Status</Name>
+            </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="rx:CombineLatest" />
             </Expression>
             <Expression xsi:type="scr:ExpressionTransform">
-              <scr:Expression>it.Item1 + "," 
-+ (Item2 &gt; 0.5 ? "1" : "0")
-+ (Item3 &gt; 0.5 ? "1" : "0") 
+              <scr:Expression>"H,"
++ (Item1 &gt; 0.5 ? "1" : "0")
++ (Item2 &gt; 0.5 ? "1" : "0") 
++ (Item3 &gt; 0.5 ? "1" : "0")
 + (Item4 &gt; 0.5 ? "1" : "0")
 + (Item5 &gt; 0.5 ? "1" : "0")
-+ (Item6 &gt; 0.5 ? "1" : "0")
++ "," 
++ Item6
++ ","
 + (Item7 &gt; 0.5 ? "1" : "0")
 </scr:Expression>
             </Expression>
@@ -363,7 +382,7 @@
           <Edges>
             <Edge From="0" To="1" Label="Source1" />
             <Edge From="1" To="2" Label="Source1" />
-            <Edge From="1" To="22" Label="Source1" />
+            <Edge From="1" To="23" Label="Source1" />
             <Edge From="2" To="3" Label="Source1" />
             <Edge From="3" To="4" Label="Source1" />
             <Edge From="4" To="5" Label="Source1" />
@@ -373,17 +392,18 @@
             <Edge From="7" To="8" Label="Source1" />
             <Edge From="8" To="9" Label="Source1" />
             <Edge From="10" To="11" Label="Source1" />
-            <Edge From="12" To="19" Label="Source1" />
-            <Edge From="13" To="19" Label="Source2" />
-            <Edge From="14" To="19" Label="Source3" />
-            <Edge From="15" To="19" Label="Source4" />
-            <Edge From="16" To="19" Label="Source5" />
-            <Edge From="17" To="19" Label="Source6" />
-            <Edge From="18" To="19" Label="Source7" />
-            <Edge From="19" To="20" Label="Source1" />
+            <Edge From="12" To="20" Label="Source1" />
+            <Edge From="13" To="20" Label="Source2" />
+            <Edge From="14" To="20" Label="Source3" />
+            <Edge From="15" To="20" Label="Source4" />
+            <Edge From="16" To="20" Label="Source5" />
+            <Edge From="17" To="18" Label="Source1" />
+            <Edge From="18" To="20" Label="Source6" />
+            <Edge From="19" To="20" Label="Source7" />
             <Edge From="20" To="21" Label="Source1" />
-            <Edge From="21" To="23" Label="Source1" />
-            <Edge From="22" To="23" Label="Source2" />
+            <Edge From="21" To="22" Label="Source1" />
+            <Edge From="22" To="24" Label="Source1" />
+            <Edge From="23" To="24" Label="Source2" />
           </Edges>
         </Workflow>
       </Expression>
@@ -559,7 +579,7 @@
             <Expression xsi:type="gui:LabelBuilder">
               <gui:Enabled>true</gui:Enabled>
               <gui:Visible>true</gui:Visible>
-              <gui:Text>Trial Number: 1</gui:Text>
+              <gui:Text>Trial Number: 2</gui:Text>
             </Expression>
             <Expression xsi:type="VisualizerMapping" />
             <Expression xsi:type="SubscribeSubject">
@@ -627,7 +647,7 @@
             <Expression xsi:type="gui:LabelBuilder">
               <gui:Enabled>true</gui:Enabled>
               <gui:Visible>true</gui:Visible>
-              <gui:Text>Trial Type: Delay</gui:Text>
+              <gui:Text>Trial Type: Go</gui:Text>
             </Expression>
             <Expression xsi:type="VisualizerMapping" />
             <Expression xsi:type="SubscribeSubject">
@@ -644,7 +664,7 @@
             <Expression xsi:type="gui:LabelBuilder">
               <gui:Enabled>true</gui:Enabled>
               <gui:Visible>true</gui:Visible>
-              <gui:Text>Running Duration: 3.30 s</gui:Text>
+              <gui:Text>Running Duration: 1.97 s</gui:Text>
             </Expression>
             <Expression xsi:type="VisualizerMapping" />
             <Expression xsi:type="SubscribeSubject">
@@ -661,7 +681,7 @@
             <Expression xsi:type="gui:LabelBuilder">
               <gui:Enabled>true</gui:Enabled>
               <gui:Visible>true</gui:Visible>
-              <gui:Text>Trial Delay Duration: 1.64 s</gui:Text>
+              <gui:Text>Trial Delay Duration: 2.17 s</gui:Text>
             </Expression>
             <Expression xsi:type="VisualizerMapping" />
             <Expression xsi:type="SubscribeSubject">
@@ -678,7 +698,7 @@
             <Expression xsi:type="gui:LabelBuilder">
               <gui:Enabled>true</gui:Enabled>
               <gui:Visible>true</gui:Visible>
-              <gui:Text>Trial Stop Duration: 0.68 s</gui:Text>
+              <gui:Text>Trial Stop Duration: 1.17 s</gui:Text>
             </Expression>
             <Expression xsi:type="VisualizerMapping" />
             <Expression xsi:type="SubscribeSubject">
@@ -695,7 +715,7 @@
             <Expression xsi:type="gui:LabelBuilder">
               <gui:Enabled>true</gui:Enabled>
               <gui:Visible>true</gui:Visible>
-              <gui:Text>Current State: monitoring_speed</gui:Text>
+              <gui:Text>Current State: inter_trial_interval</gui:Text>
             </Expression>
             <Expression xsi:type="VisualizerMapping" />
             <Expression xsi:type="gui:TableLayoutPanelBuilder">
@@ -980,7 +1000,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="num:CreateRandom">
-                <num:Seed>-2073613696</num:Seed>
+                <num:Seed>-1738543360</num:Seed>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -1248,7 +1268,7 @@
               </PropertyMappings>
             </Expression>
             <Expression xsi:type="io:CsvWriter">
-              <io:FileName>C:\Bonsai_Data\fsm_log_2026-04-27_10-19-18.csv</io:FileName>
+              <io:FileName>C:\Bonsai_Data\fsm_log_2026-05-17_16-46-25.csv</io:FileName>
               <io:Append>true</io:Append>
               <io:Overwrite>false</io:Overwrite>
               <io:Suffix>None</io:Suffix>
@@ -1509,12 +1529,13 @@ it.State == "presenting_static_grating" &amp;&amp; it.Event == "lick" ? "timeout
 it.State == "presenting_static_grating" &amp;&amp; it.Event == "delay_time_elapsed" ? "presenting_drifting_grating" :
 
 it.State == "presenting_drifting_grating" &amp;&amp; it.Event == "lick" ? "dispensing_reward" :
-it.State == "presenting_drifting_grating" &amp;&amp; it.Event == "response_time_elapsed" ? "inter_trial_interval" :
+it.State == "presenting_drifting_grating" &amp;&amp; it.Event == "response_time_elapsed" ? "miss" :
 
+it.State == "miss" &amp;&amp; it.Event == "autoreward_on" ? "dispensing_reward" :
+it.State == "miss" &amp;&amp; it.Event == "autoreward_off" ? "inter_trial_interval":
 
 it.State == "stop_trial" &amp;&amp; it.Event == "lick" ? "timeout" :
 it.State == "stop_trial" &amp;&amp; it.Event == "correct_stop" ? "inter_trial_interval" :
-
 
 it.State == "timeout" &amp;&amp; it.Event == "punish_time_elapsed" ? "inter_trial_interval" :
 
@@ -1673,7 +1694,7 @@ it.State</scr:Expression>
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:CreateExponential">
-                <p1:Rate>2</p1:Rate>
+                <p1:Rate>3.3333332538604736</p1:Rate>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -1723,8 +1744,8 @@ it.State</scr:Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:CreateCategorical">
                 <p1:ProbabilityMass>
-                  <p1:double>0.30000001192092896</p1:double>
-                  <p1:double>0.699999988079071</p1:double>
+                  <p1:double>1</p1:double>
+                  <p1:double>0</p1:double>
                   <p1:double>0</p1:double>
                 </p1:ProbabilityMass>
               </Combinator>
@@ -2355,7 +2376,7 @@ it.State</scr:Expression>
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="gl:Delay">
-                <gl:DueTime>PT1.0777993S</gl:DueTime>
+                <gl:DueTime>PT0.5629515S</gl:DueTime>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -2521,7 +2542,7 @@ it.State</scr:Expression>
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="gl:Delay">
-                <gl:DueTime>PT3S</gl:DueTime>
+                <gl:DueTime>PT1S</gl:DueTime>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -2573,6 +2594,125 @@ it.State</scr:Expression>
             <Edge From="16" To="17" Label="Source1" />
             <Edge From="17" To="18" Label="Source1" />
             <Edge From="19" To="20" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>State = Miss</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="StringProperty">
+                <Value>miss</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="WorkflowInput">
+              <Name>Source1</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:CombineLatest" />
+            </Expression>
+            <Expression xsi:type="Equal" />
+            <Expression xsi:type="rx:Condition">
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="2" Label="Source1" />
+            <Edge From="1" To="2" Label="Source2" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="4" To="5" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="rx:SelectMany">
+        <Name>Miss</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Auto_Reward</Name>
+            </Expression>
+            <Expression xsi:type="rx:Condition">
+              <Name>Is_True</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="StringProperty">
+                <Value>autoreward_on</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:Condition">
+              <Name>Is_False</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>false</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:CombineLatest" />
+                  </Expression>
+                  <Expression xsi:type="Equal" />
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="2" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source2" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="4" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="StringProperty">
+                <Value>autoreward_off</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Merge" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Take">
+                <rx:Count>1</rx:Count>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="0" To="3" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="5" Label="Source1" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="4" To="5" Label="Source2" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
           </Edges>
         </Workflow>
       </Expression>
@@ -2631,24 +2771,9 @@ it.State</scr:Expression>
             <Expression xsi:type="MulticastSubject">
               <Name>Reward_Valve_Status</Name>
             </Expression>
-            <Expression xsi:type="SubscribeSubject">
-              <Name>Second_Scale_Factor</Name>
-            </Expression>
-            <Expression xsi:type="SubscribeSubject">
-              <Name>Reward_Duration</Name>
-            </Expression>
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="rx:CombineLatest" />
-            </Expression>
-            <Expression xsi:type="Multiply" />
-            <Expression xsi:type="PropertyMapping">
-              <PropertyMappings>
-                <Property Name="DueTime" />
-              </PropertyMappings>
-            </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="rx:Delay">
-                <rx:DueTime>PT0.8S</rx:DueTime>
+                <rx:DueTime>PT0.2S</rx:DueTime>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -2690,21 +2815,16 @@ it.State</scr:Expression>
           <Edges>
             <Edge From="0" To="1" Label="Source1" />
             <Edge From="1" To="2" Label="Source1" />
-            <Edge From="2" To="8" Label="Source1" />
-            <Edge From="3" To="5" Label="Source1" />
-            <Edge From="4" To="5" Label="Source2" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="4" To="5" Label="Source1" />
             <Edge From="5" To="6" Label="Source1" />
             <Edge From="6" To="7" Label="Source1" />
-            <Edge From="7" To="8" Label="Source2" />
+            <Edge From="7" To="8" Label="Source1" />
             <Edge From="8" To="9" Label="Source1" />
             <Edge From="9" To="10" Label="Source1" />
             <Edge From="10" To="11" Label="Source1" />
             <Edge From="11" To="12" Label="Source1" />
-            <Edge From="12" To="13" Label="Source1" />
-            <Edge From="13" To="14" Label="Source1" />
-            <Edge From="14" To="15" Label="Source1" />
-            <Edge From="15" To="16" Label="Source1" />
-            <Edge From="16" To="17" Label="Source1" />
           </Edges>
         </Workflow>
       </Expression>
@@ -2951,7 +3071,7 @@ it.State</scr:Expression>
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="gl:Delay">
-                <gl:DueTime>PT1.977819S</gl:DueTime>
+                <gl:DueTime>PT2.120732S</gl:DueTime>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -3034,7 +3154,7 @@ it.State</scr:Expression>
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="gl:Delay">
-                <gl:DueTime>PT0.7833779S</gl:DueTime>
+                <gl:DueTime>PT0.5938962S</gl:DueTime>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -3135,6 +3255,22 @@ it.State</scr:Expression>
             <Expression xsi:type="WorkflowInput">
               <Name>Source1</Name>
             </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="FloatProperty">
+                <Value>0</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="MulticastSubject">
+              <Name>Stimulus_Opacity</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="FloatProperty">
+                <Value>0</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="MulticastSubject">
+              <Name>Stimulus_Speed</Name>
+            </Expression>
             <Expression xsi:type="SubscribeSubject">
               <Name>Second_Scale_Factor</Name>
             </Expression>
@@ -3184,20 +3320,24 @@ it.State</scr:Expression>
             <Expression xsi:type="WorkflowOutput" />
           </Nodes>
           <Edges>
-            <Edge From="0" To="6" Label="Source1" />
-            <Edge From="0" To="7" Label="Source1" />
-            <Edge From="1" To="3" Label="Source1" />
-            <Edge From="2" To="3" Label="Source2" />
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
             <Edge From="3" To="4" Label="Source1" />
-            <Edge From="4" To="5" Label="Source1" />
-            <Edge From="5" To="6" Label="Source2" />
-            <Edge From="6" To="9" Label="Source1" />
+            <Edge From="4" To="10" Label="Source1" />
+            <Edge From="4" To="11" Label="Source1" />
+            <Edge From="5" To="7" Label="Source1" />
+            <Edge From="6" To="7" Label="Source2" />
             <Edge From="7" To="8" Label="Source1" />
-            <Edge From="8" To="9" Label="Source2" />
-            <Edge From="9" To="10" Label="Source1" />
-            <Edge From="10" To="11" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="10" Label="Source2" />
+            <Edge From="10" To="13" Label="Source1" />
             <Edge From="11" To="12" Label="Source1" />
-            <Edge From="12" To="13" Label="Source1" />
+            <Edge From="12" To="13" Label="Source2" />
+            <Edge From="13" To="14" Label="Source1" />
+            <Edge From="14" To="15" Label="Source1" />
+            <Edge From="15" To="16" Label="Source1" />
+            <Edge From="16" To="17" Label="Source1" />
           </Edges>
         </Workflow>
       </Expression>
@@ -3230,28 +3370,31 @@ it.State</scr:Expression>
       <Edge From="16" To="31" Label="Source1" />
       <Edge From="16" To="33" Label="Source1" />
       <Edge From="16" To="35" Label="Source1" />
-      <Edge From="16" To="39" Label="Source1" />
+      <Edge From="16" To="37" Label="Source1" />
+      <Edge From="16" To="41" Label="Source1" />
       <Edge From="17" To="18" Label="Source1" />
-      <Edge From="18" To="37" Label="Source1" />
+      <Edge From="18" To="39" Label="Source1" />
       <Edge From="19" To="20" Label="Source1" />
-      <Edge From="20" To="37" Label="Source2" />
+      <Edge From="20" To="39" Label="Source2" />
       <Edge From="21" To="22" Label="Source1" />
-      <Edge From="22" To="37" Label="Source3" />
+      <Edge From="22" To="39" Label="Source3" />
       <Edge From="23" To="24" Label="Source1" />
-      <Edge From="24" To="37" Label="Source4" />
+      <Edge From="24" To="39" Label="Source4" />
       <Edge From="25" To="26" Label="Source1" />
-      <Edge From="26" To="37" Label="Source5" />
+      <Edge From="26" To="39" Label="Source5" />
       <Edge From="27" To="28" Label="Source1" />
-      <Edge From="28" To="37" Label="Source6" />
+      <Edge From="28" To="39" Label="Source6" />
       <Edge From="29" To="30" Label="Source1" />
-      <Edge From="30" To="37" Label="Source7" />
+      <Edge From="30" To="39" Label="Source7" />
       <Edge From="31" To="32" Label="Source1" />
-      <Edge From="32" To="37" Label="Source8" />
+      <Edge From="32" To="39" Label="Source8" />
       <Edge From="33" To="34" Label="Source1" />
-      <Edge From="34" To="37" Label="Source9" />
+      <Edge From="34" To="39" Label="Source9" />
       <Edge From="35" To="36" Label="Source1" />
-      <Edge From="36" To="37" Label="Source10" />
+      <Edge From="36" To="39" Label="Source10" />
       <Edge From="37" To="38" Label="Source1" />
+      <Edge From="38" To="39" Label="Source11" />
+      <Edge From="39" To="40" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
