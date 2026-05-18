@@ -17,8 +17,8 @@
     <NestedLayout>
       <WindowSettings Index="3">
         <Location>
-          <X>338</X>
-          <Y>505</Y>
+          <X>1277</X>
+          <Y>460</Y>
         </Location>
         <Size>
           <Width>336</Width>
@@ -46,8 +46,8 @@
       </WindowSettings>
       <WindowSettings Index="16">
         <Location>
-          <X>477</X>
-          <Y>336</Y>
+          <X>1401</X>
+          <Y>278</Y>
         </Location>
         <Size>
           <Width>336</Width>

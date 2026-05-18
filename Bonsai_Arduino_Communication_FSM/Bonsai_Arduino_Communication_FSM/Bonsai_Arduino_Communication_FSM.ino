@@ -33,8 +33,6 @@ char rx_buf[rx_buf_size];
 uint8_t rx_len = 0;
 bool rx_overflow = false;
 
-bool reward_valve_is_open = false;
-uint32_t reward_valve_close_time = 0;
 uint32_t last_reward_valve_open_time = 0;
 // -----------------------------
 
@@ -197,43 +195,21 @@ void open_reward_valve(uint16_t duration_ms) {
 
   uint32_t now = millis();
 
-  // Ignore zero-duration rewards
-  if (duration_ms == 0) {
-    return;
-  }
-
-  // Do not re-open if the valve is already open
-  if (reward_valve_is_open) {
-    return;
-  }
-
   // Enforce cooldown from the previous valve opening
   if (now - last_reward_valve_open_time < reward_cooldown_ms) {
     return;
   }
 
+  // Strobe The Valve
   digitalWrite(reward_valve_pin, HIGH);
+  delay(duration_ms);
+  digitalWrite(reward_valve_pin, LOW);
 
-  reward_valve_is_open = true;
-  reward_valve_close_time = now + duration_ms;
+  // Update Last Opening Time
   last_reward_valve_open_time = now;
 }
 
 
-void update_reward_valve() {
-
-  if (!reward_valve_is_open) {
-    return;
-  }
-
-  uint32_t now = millis();
-
-  // Safe across millis() rollover
-  if ((int32_t)(now - reward_valve_close_time) >= 0) {
-    digitalWrite(reward_valve_pin, LOW);
-    reward_valve_is_open = false;
-  }
-}
 
 
 void execute_hardware_message() {
@@ -295,9 +271,6 @@ void loop() {
 
   // Receive and execute incoming Bonsai command
   receive_serial_data();
-
-  // Close reward valve when its requested open duration has elapsed
-  update_reward_valve();
 
   // Transmit speed and lick analog values
   transmit_serial_data();

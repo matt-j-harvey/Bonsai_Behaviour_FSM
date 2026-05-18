@@ -342,7 +342,7 @@ if __name__ == '__main__':
 
 
         x = np.arange(5000)
-        device_names = ["Dev1", "Dev2"]
+        device_names = ["Dev4", "Dev2"]
 
         window_instance = ai_window()
         window_instance.show()

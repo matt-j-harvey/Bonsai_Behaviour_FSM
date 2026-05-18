@@ -50,7 +50,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="FloatProperty">
-                <Value>1</Value>
+                <Value>-5</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -72,7 +72,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="IntProperty">
-                <Value>50</Value>
+                <Value>20</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -105,7 +105,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="StringProperty">
-                <Value>COM9</Value>
+                <Value>COM7</Value>
               </Combinator>
             </Expression>
             <Expression xsi:type="PropertyMapping">
@@ -115,7 +115,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="port:SerialReadLine">
-                <port:PortName>COM9</port:PortName>
+                <port:PortName>COM7</port:PortName>
                 <port:NewLine>\n</port:NewLine>
               </Combinator>
             </Expression>
@@ -207,7 +207,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="port:SerialWriteLine">
-                <port:PortName>COM9</port:PortName>
+                <port:PortName>COM7</port:PortName>
                 <port:NewLine>\n</port:NewLine>
               </Combinator>
             </Expression>
@@ -253,7 +253,7 @@
             <Expression xsi:type="gui:LabelBuilder">
               <gui:Enabled>true</gui:Enabled>
               <gui:Visible>true</gui:Visible>
-              <gui:Text>trial: 10</gui:Text>
+              <gui:Text>trial: 7</gui:Text>
             </Expression>
             <Expression xsi:type="VisualizerMapping" />
             <Expression xsi:type="SubscribeSubject">
@@ -525,7 +525,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="num:CreateRandom">
-                <num:Seed>-562046080</num:Seed>
+                <num:Seed>-276582400</num:Seed>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -662,7 +662,7 @@
               </PropertyMappings>
             </Expression>
             <Expression xsi:type="io:CsvWriter">
-              <io:FileName>C:\Bonsai_Data\fsm_log_2026-05-17_16-26-54.csv</io:FileName>
+              <io:FileName>C:\Bonsai_Data\fsm_log_2026-05-18_10-07-59.csv</io:FileName>
               <io:Append>true</io:Append>
               <io:Overwrite>false</io:Overwrite>
               <io:Suffix>None</io:Suffix>
